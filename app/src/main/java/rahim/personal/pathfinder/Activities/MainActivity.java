@@ -50,12 +50,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         pathGridView = findViewById(R.id.pathGridView);
         selectedAlgorithm = ALGORITHM.UNKNOWN;
-        initMenus();
-    }
-
-    private void initMenus(){
-        initAlgorithmMenu();
+        
         initSettingsMenu();
+        initAlgorithmMenu();
     }
 
     private void initAlgorithmMenu(){
