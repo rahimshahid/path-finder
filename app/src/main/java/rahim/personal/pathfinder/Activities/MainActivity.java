@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                         .textSize(16)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
+                        .normalColorRes(R.color.colorPrimary)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
@@ -199,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
                         .textSize(14)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
+                        .normalColorRes(R.color.Fav2)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
@@ -213,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
                         .textSize(16)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
+                        .normalColorRes(R.color.Fav3)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
@@ -222,11 +225,12 @@ public class MainActivity extends AppCompatActivity {
 
         settingsMenu.addBuilder(
                 new TextInsideCircleButton.Builder()
-                        .normalText("Unblock")
+                        .normalText("Clear")
                         .textGravity(Gravity.CENTER)
                         .textSize(14)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
+                        .normalColorRes(R.color.Fav4)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
@@ -241,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                         .textSize(16)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
+                        .normalColorRes(R.color.Fav6)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
@@ -255,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
                         .textSize(16)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
+                        .normalColorRes(R.color.colorAccent)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
@@ -269,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
                         .textSize(16)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
+                        .normalColorRes(R.color.Fav3)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
