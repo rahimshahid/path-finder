@@ -7,7 +7,6 @@ import rahim.personal.pathfinder.Utilities.Helpers;
 import rahim.personal.pathfinder.Views.PathGridView;
 
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Window;
@@ -19,7 +18,6 @@ import com.nightonke.boommenu.BoomButtons.BoomButton;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
 import com.nightonke.boommenu.BoomButtons.HamButton;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
-import com.nightonke.boommenu.BoomButtons.SimpleCircleButton;
 import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.ButtonEnum;
@@ -72,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         algorithmMenu.setHideRotateEaseEnum(EaseEnum.Linear);
         algorithmMenu.setHideScaleEaseEnum(EaseEnum.Linear);
 
-        final int COLOR_SELECTED = Helpers.getColor(AppContext.getContext(), R.color.LessDarkBackground);
+        final int COLOR_SELECTED = Helpers.getColor(AppContext.getContext(), R.color.WhiteSmoke);
         final int COLOR_NOT_SELECTED = Helpers.getColor(AppContext.getContext(), R.color.White);
 
         algorithmMenu.addBuilder(
@@ -189,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
-                                Toast.makeText(MainActivity.this, "Small Grid", Toast.LENGTH_SHORT).show();
+                                pathGridView.setParametersAndRebuild(PathGridView.GRID_SIZE_SMALL);
                             }
                         }));
 
@@ -204,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
-                                Toast.makeText(MainActivity.this, "Medium Grid", Toast.LENGTH_SHORT).show();
+                                pathGridView.setParametersAndRebuild(PathGridView.GRID_SIZE_MEDIUM);
                             }
                         }));
 
@@ -219,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
-                                Toast.makeText(MainActivity.this, "Large Grid", Toast.LENGTH_SHORT).show();
+                                pathGridView.setParametersAndRebuild(PathGridView.GRID_SIZE_LARGE);
                             }
                         }));
 
@@ -234,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
-                                Toast.makeText(MainActivity.this, "Clear Blockages", Toast.LENGTH_SHORT).show();
+                                pathGridView.clearBlockages();
                             }
                         }));
 
@@ -249,7 +247,8 @@ public class MainActivity extends AppCompatActivity {
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {
-                                Toast.makeText(MainActivity.this, "Reset Grid", Toast.LENGTH_SHORT).show();
+                                pathGridView.Rebuild();
+                                Toast.makeText(MainActivity.this, "Grid has been reset", Toast.LENGTH_SHORT).show();
                             }
                         }));
 
@@ -275,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                         .textSize(16)
                         .maxLines(2)
                         .textRect(new Rect(0, 0, 280, 280))
-                        .normalColorRes(R.color.Fav3)
+                        .normalColorRes(R.color.colorAccentDark)
                         .listener(new OnBMClickListener() {
                             @Override
                             public void onBoomButtonClick(int index) {

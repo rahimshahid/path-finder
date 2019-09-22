@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import rahim.personal.pathfinder.R;
@@ -15,16 +16,25 @@ public class PathGridView extends View {
     private static final String TAG = "PATH_GRID_VIEW";
 
     // Constants
-    public static int MIN_GRID_SIZE = 16;
+    public static int GRID_SIZE_SMALL = 12;
+    public static int GRID_SIZE_MEDIUM = 16;
+    public static int GRID_SIZE_LARGE = 26;
+
     // Colors
+    //public static int COLOR_BOX_EMPTY = Helpers.getColor(AppContext.getContext(), R.color.White);
     public static int COLOR_BORDER = Helpers.getColor(AppContext.getContext(), R.color.LightestGrey);
-    public static int COLOR_BOX_EMPTY = Helpers.getColor(AppContext.getContext(), R.color.White);
     public static int COLOR_BOX_BLOCKED = Helpers.getColor(AppContext.getContext(), R.color.DarkGray);
     public static int COLOR_BOX_QUEUED =  Helpers.getColor(AppContext.getContext(), R.color.LightBlue);
     public static int COLOR_BOX_DISCOVERED =  Helpers.getColor(AppContext.getContext(), R.color.LightGreen);
     public static int COLOR_BOX_START = Helpers.getColor(AppContext.getContext(), R.color.BrightGreen);
     public static int COLOR_BOX_END = Helpers.getColor(AppContext.getContext(), R.color.MatRed);
     public static int COLOR_BOX_PATH = Helpers.getColor(AppContext.getContext(), R.color.BlueViolet);
+
+    // Flags
+    private boolean GESTURE_START_BOX_GRABBED = false;
+    private boolean GESTURE_END_BOX_GRABBED = false;
+    private boolean GESTURE_ERASING_BLOCKAGES = false;
+    private Box LAST_BOX_TOUCHED = null;
 
     // Box States
     public enum BOX_STATES{
@@ -40,6 +50,7 @@ public class PathGridView extends View {
     // Members
     private Paint paint;
     private Grid grid;
+    private int minGridSize = 16;
 
     public PathGridView(Context context) {
         super(context);
@@ -56,6 +67,21 @@ public class PathGridView extends View {
         initialize();
     }
 
+    public void setParametersAndRebuild(int gridSize){
+        minGridSize = gridSize;
+        Rebuild();
+    }
+
+    public void Rebuild(){
+        grid = new Grid(minGridSize, getWidth(), getHeight());
+        invalidate();
+    }
+
+    public void clearBlockages(){
+        grid.clearBlockages();
+        invalidate();
+    }
+
     private void initialize() {
         grid = new Grid();
         paint = new Paint();
@@ -65,22 +91,81 @@ public class PathGridView extends View {
         paint.setStrokeWidth(getResources().getDisplayMetrics().density * 1);
     }
 
+    final GestureDetector gestureDetector = new GestureDetector(AppContext.getContext(),
+            new GestureDetector.SimpleOnGestureListener() {
+                public void onLongPress(MotionEvent e) {
+                    // Block single Box
+                    int x = (int)e.getX();
+                    int y = (int)e.getY();
+                    Box box = grid.getBoxFromPixelLocation(x, y);
+                    if (box != null){
+                        if (box.state == BOX_STATES.EMPTY){
+                            box.state = BOX_STATES.BLOCKED;
+                        }
+                    }
+                }
+    });
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+        //gestureDetector.onTouchEvent(event);
         int eventAction = event.getAction();
         int x = (int)event.getX();
         int y = (int)event.getY();
-
+        Box box = grid.getBoxFromPixelLocation(x, y);
+        if (box == null){
+            return false;
+        }
         // put your code in here to handle the event
         switch (eventAction) {
             case MotionEvent.ACTION_DOWN:
+                if (box == LAST_BOX_TOUCHED)
+                    break;
+                LAST_BOX_TOUCHED = box;
+
+                if (box.state == BOX_STATES.START){
+                    GESTURE_START_BOX_GRABBED = true;
+                    Helpers.vibrate(1);
+                }
+                else if (box.state == BOX_STATES.END){
+                    GESTURE_END_BOX_GRABBED = true;
+                    Helpers.vibrate(1);
+                }
+                else if (box.state == BOX_STATES.EMPTY) {
+                    box.state = BOX_STATES.BLOCKED;
+                }
+                else if (box.state == BOX_STATES.BLOCKED){
+                    GESTURE_ERASING_BLOCKAGES = true;
+                    box.state = BOX_STATES.EMPTY;
+                }
                 break;
-            case MotionEvent.ACTION_UP:
-                grid.OnUserTap(x, y);
-                break;
+
             case MotionEvent.ACTION_MOVE:
-                grid.OnUserTap(x, y);
+                if (box == LAST_BOX_TOUCHED)
+                    break;
+                LAST_BOX_TOUCHED = box;
+
+                if (GESTURE_START_BOX_GRABBED) {
+                    grid.setStartBox(box);
+                }
+                else if (GESTURE_END_BOX_GRABBED) {
+                    grid.setEndBox(box);
+                }
+                else if (GESTURE_ERASING_BLOCKAGES){
+                    if (box.state == BOX_STATES.BLOCKED){
+                        box.state = BOX_STATES.EMPTY;
+                    }
+                }
+                else if (box.state == BOX_STATES.EMPTY) {
+                    box.state = BOX_STATES.BLOCKED;
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+                LAST_BOX_TOUCHED = null;
+                GESTURE_START_BOX_GRABBED = false;
+                GESTURE_END_BOX_GRABBED = false;
+                GESTURE_ERASING_BLOCKAGES = false;
                 break;
         }
         // tell the View to redraw the Canvas
@@ -93,7 +178,7 @@ public class PathGridView extends View {
     protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld){
         super.onSizeChanged(xNew, yNew, xOld, yOld);
         // Rebuild grid when size is changed
-        grid = new Grid(MIN_GRID_SIZE, xNew, yNew);
+        grid = new Grid(minGridSize, xNew, yNew);
     }
 
     @Override
@@ -104,9 +189,14 @@ public class PathGridView extends View {
 }
 
 class Grid{
+    private Box [][] Box2dArr;
     private int size_X;
     private int size_Y;
-    private Box [][] Box2dArr;
+
+    private Box startBox;
+    private Box endBox;
+    private PathGridView.BOX_STATES lastStartBoxState = PathGridView.BOX_STATES.EMPTY;
+    private PathGridView.BOX_STATES lastEndBoxState = PathGridView.BOX_STATES.EMPTY;
 
     Grid(){
         size_X = 0;
@@ -142,6 +232,34 @@ class Grid{
                 Box2dArr[i][j] = new Box(top, left, bottom, right); // Init Boxes
             }
         }
+
+        // Set starting and ending blocks
+        setStartBox(getBox(Helpers.getRandomNum(0, size_Y - 1), Helpers.getRandomNum(0, size_X - 1)));
+        setEndBox(getBox(Helpers.getRandomNum(0, size_Y - 1), Helpers.getRandomNum(0, size_X - 1)));
+    }
+
+    public Box getStartBox() {
+        return startBox;
+    }
+
+    public void setStartBox(Box startBox) {
+        if (this.startBox != null)
+            this.startBox.state = lastStartBoxState;
+        lastStartBoxState = startBox.state;
+        startBox.state = PathGridView.BOX_STATES.START;
+        this.startBox = startBox;
+    }
+
+    public Box getEndBox() {
+        return endBox;
+    }
+
+    public void setEndBox(Box endBox) {
+        if (this.endBox != null)
+            this.endBox.state = lastEndBoxState;
+        lastEndBoxState = endBox.state;
+        endBox.state = PathGridView.BOX_STATES.END;
+        this.endBox = endBox;
     }
 
     Box getBox(int y, int x){
@@ -152,12 +270,23 @@ class Grid{
         }
     }
 
-    void OnUserTap(int x_location, int y_location){
-        for (int i = 0; i < size_Y; i++){
-            for (int j = 0; j < size_X; j++){
+    Box getBoxFromPixelLocation(int x_location, int y_location){
+        for (int i = 0; i < size_Y; i++) {
+            for (int j = 0; j < size_X; j++) {
                 // Find box that is touched and change its state to blocked
-                if (Box2dArr[i][j].rectF.contains(x_location, y_location)){
-                    Box2dArr[i][j].state = PathGridView.BOX_STATES.BLOCKED;
+                if (Box2dArr[i][j].rectF.contains(x_location, y_location)) {
+                    return Box2dArr[i][j];
+                }
+            }
+        }
+        return null;
+    }
+
+    void clearBlockages(){
+        for (int i = 0; i < size_Y; i++) {
+            for (int j = 0; j < size_X; j++) {
+                if (Box2dArr[i][j].state == PathGridView.BOX_STATES.BLOCKED) {
+                    Box2dArr[i][j].state = PathGridView.BOX_STATES.EMPTY;
                 }
             }
         }
@@ -186,8 +315,8 @@ class Box{
 
         switch (state){
             case EMPTY:
-                paint.setColor(PathGridView.COLOR_BOX_EMPTY);
-                paint.setStyle(Paint.Style.FILL);
+                //paint.setColor(PathGridView.COLOR_BOX_EMPTY);
+                //paint.setStyle(Paint.Style.FILL);
                 break;
             case BLOCKED:
                 paint.setColor(PathGridView.COLOR_BOX_BLOCKED);
