@@ -94,21 +94,13 @@ public class PathGridView extends View {
     final GestureDetector gestureDetector = new GestureDetector(AppContext.getContext(),
             new GestureDetector.SimpleOnGestureListener() {
                 public void onLongPress(MotionEvent e) {
-                    // Block single Box
-                    int x = (int)e.getX();
-                    int y = (int)e.getY();
-                    Box box = grid.getBoxFromPixelLocation(x, y);
-                    if (box != null){
-                        if (box.state == BOX_STATES.EMPTY){
-                            box.state = BOX_STATES.BLOCKED;
-                        }
-                    }
+                    
                 }
     });
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //gestureDetector.onTouchEvent(event);
+        gestureDetector.onTouchEvent(event);
         int eventAction = event.getAction();
         int x = (int)event.getX();
         int y = (int)event.getY();
