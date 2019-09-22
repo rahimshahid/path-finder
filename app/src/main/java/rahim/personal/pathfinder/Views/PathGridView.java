@@ -21,7 +21,6 @@ public class PathGridView extends View {
     public static int GRID_SIZE_LARGE = 26;
 
     // Colors
-    //public static int COLOR_BOX_EMPTY = Helpers.getColor(AppContext.getContext(), R.color.White);
     public static int COLOR_BORDER = Helpers.getColor(AppContext.getContext(), R.color.LightestGrey);
     public static int COLOR_BOX_BLOCKED = Helpers.getColor(AppContext.getContext(), R.color.DarkGray);
     public static int COLOR_BOX_QUEUED =  Helpers.getColor(AppContext.getContext(), R.color.LightBlue);
@@ -33,8 +32,8 @@ public class PathGridView extends View {
     // Flags
     private boolean GESTURE_START_BOX_GRABBED = false;
     private boolean GESTURE_END_BOX_GRABBED = false;
-    private boolean GESTURE_ERASING_BLOCKAGES = false;
-    private Box LAST_BOX_TOUCHED = null;
+    private boolean GESTURE_ERASING_BLOCKAGES = false; // First box touched was blocked so removing gesture will be enabled until finger is lifted
+    private Box LAST_BOX_TOUCHED = null; // To ignore multiple onTouch calls while inside the same box
 
     // Box States
     public enum BOX_STATES{
@@ -94,7 +93,7 @@ public class PathGridView extends View {
     final GestureDetector gestureDetector = new GestureDetector(AppContext.getContext(),
             new GestureDetector.SimpleOnGestureListener() {
                 public void onLongPress(MotionEvent e) {
-                    
+                    // Long press detected
                 }
     });
 
@@ -265,7 +264,6 @@ class Grid{
     Box getBoxFromPixelLocation(int x_location, int y_location){
         for (int i = 0; i < size_Y; i++) {
             for (int j = 0; j < size_X; j++) {
-                // Find box that is touched and change its state to blocked
                 if (Box2dArr[i][j].rectF.contains(x_location, y_location)) {
                     return Box2dArr[i][j];
                 }
@@ -304,11 +302,8 @@ class Box{
 
     void draw(Canvas canvas, Paint paint){
         int previousPaintColor = paint.getColor();
-
         switch (state){
             case EMPTY:
-                //paint.setColor(PathGridView.COLOR_BOX_EMPTY);
-                //paint.setStyle(Paint.Style.FILL);
                 break;
             case BLOCKED:
                 paint.setColor(PathGridView.COLOR_BOX_BLOCKED);
