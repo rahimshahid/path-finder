@@ -18,6 +18,7 @@ public class PathGridView extends View {
     public static int MIN_GRID_SIZE = 16;
     // Colors
     public static int COLOR_BORDER = Helpers.getColor(AppContext.getContext(), R.color.LightestGrey);
+    public static int COLOR_BOX_EMPTY = Helpers.getColor(AppContext.getContext(), R.color.White);
     public static int COLOR_BOX_BLOCKED = Helpers.getColor(AppContext.getContext(), R.color.DarkGray);
     public static int COLOR_BOX_QUEUED =  Helpers.getColor(AppContext.getContext(), R.color.LightBlue);
     public static int COLOR_BOX_DISCOVERED =  Helpers.getColor(AppContext.getContext(), R.color.LightGreen);
@@ -185,6 +186,8 @@ class Box{
 
         switch (state){
             case EMPTY:
+                paint.setColor(PathGridView.COLOR_BOX_EMPTY);
+                paint.setStyle(Paint.Style.FILL);
                 break;
             case BLOCKED:
                 paint.setColor(PathGridView.COLOR_BOX_BLOCKED);

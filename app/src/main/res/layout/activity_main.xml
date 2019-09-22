@@ -14,21 +14,23 @@
     </rahim.personal.pathfinder.Views.PathGridView>
 
     <com.nightonke.boommenu.BoomMenuButton
-        android:id="@+id/algorithmMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/pathGridView"
-        android:layout_alignRight="@+id/pathGridView"
-        android:layout_marginBottom="30dp"
-        android:layout_marginRight="15dp"/>
-
-    <com.nightonke.boommenu.BoomMenuButton
         android:id="@+id/settingsMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/pathGridView"
         android:layout_alignRight="@+id/pathGridView"
         android:layout_marginBottom="100dp"
-        android:layout_marginRight="15dp"/>
+        android:layout_marginRight="15dp"
+        app:bmb_normalColor="@color/colorAccent"/>
+
+    <com.nightonke.boommenu.BoomMenuButton
+        android:id="@+id/algorithmMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/pathGridView"
+        android:layout_alignRight="@+id/pathGridView"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="15dp"
+        app:bmb_normalColor="@color/colorAccentDark"/>
 
 </RelativeLayout>

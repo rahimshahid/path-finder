@@ -3,6 +3,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorAccentDark">#900C3F</color>
 
     <color name="White">#FFFFFF</color>
     <color name="Ivory">#FFFFF0</color>
@@ -143,8 +144,17 @@
     <color name="Green">#008000</color>
     <color name="DarkGreen">#006400</color>
     <color name="Blue">#0000FF</color>
+    <color name="BrightBlue">#4141FA</color>
     <color name="MediumBlue">#0000CD</color>
     <color name="DarkBlue">#00008B</color>
     <color name="Navy">#000080</color>
     <color name="Black">#000000</color>
+    <color name="DarkBackground">#353131</color>
+    <color name="LessDarkBackground">#AFAFAF</color>
+    <color name="Fav1">#DAF7A6</color>
+    <color name="Fav2">#FFC300</color>
+    <color name="Fav3">#FF5733</color>
+    <color name="Fav4">#C70039</color>
+    <color name="Fav5">#900C3F</color>
+    <color name="Fav6">#581845 </color>
 </resources>
